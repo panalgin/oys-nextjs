@@ -7,6 +7,7 @@ import { AlertCircle, X } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
+import { GoogleSignInButton } from "@/components/google-sign-in-button"
 
 interface Task {
   id: string
@@ -55,11 +56,10 @@ const taskTitles = [
   "Tüm sınıfı bir bilim müzesine götürmek",
 ]
 
-export default function Component() {
+export default function RewardTasks() {
   const [tasks, setTasks] = React.useState<Task[]>([])
   const [isSignedIn, setIsSignedIn] = React.useState(false)
   const [currentUser, setCurrentUser] = React.useState<User | null>(null)
-  const [isSigningIn, setIsSigningIn] = React.useState(false)
   const { toast } = useToast()
 
   React.useEffect(() => {
@@ -107,56 +107,25 @@ export default function Component() {
     })
   }
 
-  const handleSignIn = async () => {
-    if (isSignedIn) {
-      setIsSignedIn(false)
-      setCurrentUser(null)
-      toast({
-        title: "Çıkış yapıldı",
-        description: "Başarıyla çıkış yaptınız.",
-      })
-    } else {
-      setIsSigningIn(true)
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        setIsSignedIn(true)
-        setCurrentUser(mockUsers[0])
-        toast({
-          title: "Giriş başarılı",
-          description: "Hoş geldiniz, Fatma Topal!",
-        })
-      } catch (error) {
-        toast({
-          title: "Giriş başarısız",
-          description: `Giriş yapılırken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`,
-          variant: "destructive",
-        })
-      } finally {
-        setIsSigningIn(false)
-      }
-    }
+  const handleSignOut = () => {
+    setIsSignedIn(false)
+    setCurrentUser(null)
+    toast({
+      title: "Çıkış yapıldı",
+      description: "Başarıyla çıkış yaptınız.",
+    })
   }
 
   return (
     <div className="w-full max-w-7xl mx-auto bg-background p-4 sm:p-6 lg:p-8">
       <div className="mb-6">
-        <Button
-          onClick={handleSignIn}
-          disabled={isSigningIn}
-          className="w-full sm:w-auto mb-4"
-        >
-          {isSigningIn ? (
-            <span className="flex items-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Giriş yapılıyor...
-            </span>
-          ) : (
-            isSignedIn ? "Çıkış Yap" : "Giriş Yap"
-          )}
-        </Button>
+        {isSignedIn ? (
+          <Button onClick={handleSignOut} className="w-full sm:w-auto mb-4">
+            Çıkış Yap
+          </Button>
+        ) : (
+          <GoogleSignInButton />
+        )}
 
         {!isSignedIn && (
           <Alert variant="default" className="mb-4">
