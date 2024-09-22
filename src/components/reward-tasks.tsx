@@ -21,7 +21,7 @@ interface Task {
 }
 
 type User = FirebaseUser & {
-	email: string | null;
+email: string | null;
 	displayName: string | null;
 	uid: string;
 	photoURL: string | null;
