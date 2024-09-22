@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserByUid } from '@/server/user-service';
 
 export async function GET(req: NextRequest) {
-  const uid = req.headers.get('x-user-uid');
+  const uid = req.headers.get('X-User-Uid');
 
   if (!uid) {
     return NextResponse.json({ message: 'User UID is required' }, { status: 400 });

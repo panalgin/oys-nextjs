@@ -3,9 +3,9 @@ import { FcGoogle } from 'react-icons/fc';
 import { signInWithPopup } from 'firebase/auth';
 import { useToast } from '@/client/components/ui/use-toast';
 import { UserSignInDto } from '@/common/user-sign-in.dto';
-import { useUser } from '@/client/context/user-context';
 import { auth, googleProvider } from '@/client/firebase';
 import { User } from '@/common/user';
+import useUser from '@/client/store/user-store';
 
 export function GoogleSignInButton() {
 	const { toast } = useToast();

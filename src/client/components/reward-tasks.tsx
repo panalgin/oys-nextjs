@@ -2,17 +2,16 @@
 
 import * as React from 'react';
 import { Button } from '@/client/components/ui/button';
-import { Alert, AlertDescription } from '@/client/components/ui/alert';
-import { AlertCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/client/components/ui/avatar';
 import { Card, CardContent, CardFooter } from '@/client/components/ui/card';
 import { useToast } from '@/client/components/ui/use-toast';
-import { GoogleSignInButton } from '@/client/components/google-sign-in-button';
-import AccountPanel from '@/client/components/account-panel';
 import { createMockUser } from '@/client/create-mock-user';
 import Image from 'next/image';
-import { useUser } from '@/client/context/user-context';
 import { User } from '@/common/user';
+import useUser from '@/client/store/user-store';
+import { useMemo } from 'react';
+import UserArea from './user-area';
 
 interface Task {
 	id: string;
@@ -60,7 +59,7 @@ const taskTitles = [
 
 export default function RewardTasks() {
 	const [tasks, setTasks] = React.useState<Task[]>([]);
-	const { user, setUser } = useUser();
+	const { user, setUser, isLoading, isFetched } = useUser();
 	const { toast } = useToast();
 
 	React.useEffect(() => {
@@ -90,8 +89,8 @@ export default function RewardTasks() {
 
 	const toggleTaskSelection = (taskId: string) => {
 		if (!user) return;
-		
-    setTasks((prevTasks) =>
+
+		setTasks((prevTasks) =>
 			prevTasks.map((task) => {
 				if (task.id === taskId) {
 					if (task.selectedBy && task.selectedBy.uid !== user.uid) {
@@ -105,10 +104,7 @@ export default function RewardTasks() {
 					}
 					return {
 						...task,
-						selectedBy:
-							task.selectedBy?.uid === user.uid
-								? undefined
-								: user,
+						selectedBy: task.selectedBy?.uid === user.uid ? undefined : user,
 					};
 				}
 				return task;
@@ -120,42 +116,32 @@ export default function RewardTasks() {
 		});
 	};
 
-	const handleSignOut = () => {
-
-    setUser(null);
-
-		toast({
-			title: 'Çıkış yapıldı',
-			description: 'Başarıyla çıkış yaptınız.',
-		});
+	const getInitials = (name: string): string => {
+		return name
+			.split(' ')
+			.map((part) => part[0])
+			.join('')
+			.toUpperCase()
+			.slice(0, 2);
 	};
 
-	const getInitials = (name: string): string => {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
-  }
+	const memoizedUserArea = useMemo(() => {
+		const handleSignOut = () => {
+			setUser(null);
+	
+			toast({
+				title: 'Çıkış yapıldı',
+				description: 'Başarıyla çıkış yaptınız.',
+			});
+		};
+		
+		return <UserArea user={user} isLoading={isLoading} isFetched={isFetched} handleSignOut={handleSignOut} />;
+	}, [user, isLoading, isFetched, setUser, toast]);
 
 	return (
 		<div className="w-full max-w-7xl mx-auto bg-background p-4 sm:p-6 lg:p-8">
 			<div className="my-4">
-				{user ? (
-					<AccountPanel onSignOut={handleSignOut} user={user} />
-				) : (
-					<GoogleSignInButton />
-				)}
-
-				{!user && (
-					<Alert variant="default" className="mb-4">
-						<AlertCircle className="h-4 w-4" />
-						<AlertDescription>
-							Lütfen görev seçmek için giriş yapın.
-						</AlertDescription>
-					</Alert>
-				)}
+				{memoizedUserArea}
 			</div>
 			<div className="mb-6">
 				<h2 className="text-2xl font-bold mb-4 text-foreground">
@@ -212,21 +198,25 @@ export default function RewardTasks() {
 						<CardFooter className="p-4 pt-0">
 							{task.selectedBy ? (
 								<div className="flex items-center space-x-2">
-									<Avatar className={`h-10 w-10 ${task.selectedBy.photoURL ? '' : 'bg-gray-400'}`}>
-                    {task.selectedBy.photoURL ? (
-                      <Image 
-                        src={task.selectedBy.photoURL} 
-                        alt="User Avatar" 
-                        width={40} 
-                        height={40} 
-                        className="h-full w-full object-cover" 
-                      />
-                    ) : (
-                      <AvatarFallback className="text-gray-900 font-medium">
-                        {getInitials(task.selectedBy.displayName ?? '')}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
+									<Avatar
+										className={`h-10 w-10 ${
+											task.selectedBy.photoURL ? '' : 'bg-gray-400'
+										}`}
+									>
+										{task.selectedBy.photoURL ? (
+											<Image
+												src={task.selectedBy.photoURL}
+												alt="User Avatar"
+												width={40}
+												height={40}
+												className="h-full w-full object-cover"
+											/>
+										) : (
+											<AvatarFallback className="text-gray-900 font-medium">
+												{getInitials(task.selectedBy.displayName ?? '')}
+											</AvatarFallback>
+										)}
+									</Avatar>
 									<span className="text-xs text-muted-foreground">
 										{task.selectedBy.uid === user?.uid
 											? task.selectedBy.displayName
@@ -247,8 +237,7 @@ export default function RewardTasks() {
 				<p className="text-sm text-muted-foreground">
 					{user
 						? `${
-								tasks.filter((t) => t.selectedBy?.uid === user?.uid)
-									.length
+								tasks.filter((t) => t.selectedBy?.uid === user?.uid).length
 						  } görev sizin tarafınızdan seçildi`
 						: 'Görev seçmek için giriş yapın'}
 				</p>
