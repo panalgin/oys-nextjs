@@ -1,9 +1,9 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback } from "@/client/components/ui/avatar"
+import { Button } from "@/client/components/ui/button"
 import { LogOut } from "lucide-react"
 import Image from "next/image"
-import { User } from "firebase/auth"
-import { createMockUser } from '../lib/create-mock-user'
+import { User } from "@/common/user"
+import { createMockUser } from '@/client/create-mock-user'
 
 interface AccountPanelProps {
   user: User

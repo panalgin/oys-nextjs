@@ -1,21 +1,20 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/client/components/ui/button';
 import { FcGoogle } from 'react-icons/fc';
-import { auth, googleProvider } from '@/lib/firebase';
-import { signInWithPopup, User } from 'firebase/auth';
-import { useToast } from '@/components/ui/use-toast';
-import { UserSignInDto } from '@/lib/contacts/user-sign-in.dto';
+import { signInWithPopup } from 'firebase/auth';
+import { useToast } from '@/client/components/ui/use-toast';
+import { UserSignInDto } from '@/common/user-sign-in.dto';
+import { useUser } from '@/client/context/user-context';
+import { auth, googleProvider } from '@/client/firebase';
+import { User } from '@/common/user';
 
-interface GoogleSignInButtonProps {
-	onSignIn: (user: User) => void;
-}
-
-export function GoogleSignInButton({ onSignIn }: GoogleSignInButtonProps) {
+export function GoogleSignInButton() {
 	const { toast } = useToast();
+  const { setUser } = useUser();
 
 	const handleSignIn = async () => {
 		try {
 			const result = await signInWithPopup(auth, googleProvider);
-			const user = result.user;
+			const user = result.user as User;
 
 			const userSignInDto: UserSignInDto = {
 				uid: user.uid,
@@ -32,8 +31,10 @@ export function GoogleSignInButton({ onSignIn }: GoogleSignInButtonProps) {
 				},
 				body: JSON.stringify(userSignInDto),
 			});
+      
+			localStorage.setItem('userUid', user.uid);
 
-			onSignIn(user);
+			setUser(user);
 
 			toast({
 				title: 'Giriş başarılı',

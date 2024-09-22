@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { firestore } from '@/lib/firebase-admin'; // Adjust the path as necessary
-import { UserSignInDto } from '@/lib/contacts/user-sign-in.dto';
+import { firestore } from '@/server/firebase-admin';
+import { UserSignInDto } from '@/common/user-sign-in.dto';
 
 export async function POST(req: Request) {
 	const { uid, email, displayName, photoURL } = await req.json();

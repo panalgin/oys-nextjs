@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { firestore } from "@/lib/firebase-admin"; // Adjust the import path as necessary
+import { firestore } from "@/server/firebase-admin";
 
 export async function POST(req: NextRequest) {
     const code = req.nextUrl.searchParams.get("code");

@@ -1,4 +1,4 @@
-import RewardTasks from '@/components/reward-tasks'
+import RewardTasks from '@/client/components/reward-tasks'
 
 export default function Home() {
   return (

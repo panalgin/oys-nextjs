@@ -1,17 +1,18 @@
 'use client';
 
 import * as React from 'react';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/client/components/ui/button';
+import { Alert, AlertDescription } from '@/client/components/ui/alert';
 import { AlertCircle, X } from 'lucide-react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
-import { GoogleSignInButton } from '@/components/google-sign-in-button';
-import AccountPanel from './account-panel';
-import { User as FirebaseUser } from 'firebase/auth';
-import { createMockUser } from '../lib/create-mock-user';
+import { Avatar, AvatarFallback } from '@/client/components/ui/avatar';
+import { Card, CardContent, CardFooter } from '@/client/components/ui/card';
+import { useToast } from '@/client/components/ui/use-toast';
+import { GoogleSignInButton } from '@/client/components/google-sign-in-button';
+import AccountPanel from '@/client/components/account-panel';
+import { createMockUser } from '@/client/create-mock-user';
 import Image from 'next/image';
+import { useUser } from '@/client/context/user-context';
+import { User } from '@/common/user';
 
 interface Task {
 	id: string;
@@ -19,13 +20,6 @@ interface Task {
 	selectedBy?: User;
 	dueDate: Date;
 }
-
-type User = FirebaseUser & {
-email: string | null;
-	displayName: string | null;
-	uid: string;
-	photoURL: string | null;
-};
 
 const mockUsers: User[] = [
 	createMockUser('fatma@ornek.com', 'Fatma Topal', '1'),
@@ -66,10 +60,7 @@ const taskTitles = [
 
 export default function RewardTasks() {
 	const [tasks, setTasks] = React.useState<Task[]>([]);
-	const [isSignedIn, setIsSignedIn] = React.useState(false);
-	const [currentUser, setCurrentUser] = React.useState<User | undefined>(
-		undefined
-	);
+	const { user, setUser } = useUser();
 	const { toast } = useToast();
 
 	React.useEffect(() => {
@@ -98,11 +89,12 @@ export default function RewardTasks() {
 	}, []);
 
 	const toggleTaskSelection = (taskId: string) => {
-		if (!isSignedIn || !currentUser) return;
-		setTasks((prevTasks) =>
+		if (!user) return;
+		
+    setTasks((prevTasks) =>
 			prevTasks.map((task) => {
 				if (task.id === taskId) {
-					if (task.selectedBy && task.selectedBy.uid !== currentUser.uid) {
+					if (task.selectedBy && task.selectedBy.uid !== user.uid) {
 						// Can't select a task owned by someone else
 						toast({
 							title: 'Görev seçilemedi',
@@ -114,9 +106,9 @@ export default function RewardTasks() {
 					return {
 						...task,
 						selectedBy:
-							task.selectedBy?.uid === currentUser.uid
+							task.selectedBy?.uid === user.uid
 								? undefined
-								: currentUser,
+								: user,
 					};
 				}
 				return task;
@@ -128,14 +120,10 @@ export default function RewardTasks() {
 		});
 	};
 
-	const handleSignIn = (user: User) => {
-		setIsSignedIn(true);
-		setCurrentUser(user);
-	};
-
 	const handleSignOut = () => {
-		setIsSignedIn(false);
-		setCurrentUser(undefined);
+
+    setUser(null);
+
 		toast({
 			title: 'Çıkış yapıldı',
 			description: 'Başarıyla çıkış yaptınız.',
@@ -154,13 +142,13 @@ export default function RewardTasks() {
 	return (
 		<div className="w-full max-w-7xl mx-auto bg-background p-4 sm:p-6 lg:p-8">
 			<div className="my-4">
-				{isSignedIn && currentUser ? (
-					<AccountPanel onSignOut={handleSignOut} user={currentUser} />
+				{user ? (
+					<AccountPanel onSignOut={handleSignOut} user={user} />
 				) : (
-					<GoogleSignInButton onSignIn={handleSignIn} />
+					<GoogleSignInButton />
 				)}
 
-				{!isSignedIn && (
+				{!user && (
 					<Alert variant="default" className="mb-4">
 						<AlertCircle className="h-4 w-4" />
 						<AlertDescription>
@@ -181,12 +169,12 @@ export default function RewardTasks() {
 						key={task.id}
 						className={`cursor-pointer transition-colors ${
 							task.selectedBy
-								? task.selectedBy.uid === currentUser?.uid
+								? task.selectedBy.uid === user?.uid
 									? 'bg-green-300'
 									: 'bg-gray-100 cursor-not-allowed'
 								: 'hover:bg-muted'
 						}`}
-						onClick={() => isSignedIn && toggleTaskSelection(task.id)}
+						onClick={() => user && toggleTaskSelection(task.id)}
 					>
 						<CardContent className="p-4">
 							<div className="flex flex-col h-full">
@@ -194,7 +182,7 @@ export default function RewardTasks() {
 									<p className="text-sm font-medium leading-tight flex-grow pr-2">
 										{task.title}
 									</p>
-									{isSignedIn && task.selectedBy?.uid === currentUser?.uid && (
+									{user && task.selectedBy?.uid === user.uid && (
 										<div className="flex space-x-2 flex-shrink-0">
 											<Button
 												size="icon"
@@ -240,7 +228,7 @@ export default function RewardTasks() {
                     )}
                   </Avatar>
 									<span className="text-xs text-muted-foreground">
-										{task.selectedBy.uid === currentUser?.uid
+										{task.selectedBy.uid === user?.uid
 											? task.selectedBy.displayName
 											: maskName(task.selectedBy.displayName ?? '')}
 									</span>
@@ -257,9 +245,9 @@ export default function RewardTasks() {
 
 			<div className="mt-6">
 				<p className="text-sm text-muted-foreground">
-					{isSignedIn
+					{user
 						? `${
-								tasks.filter((t) => t.selectedBy?.uid === currentUser?.uid)
+								tasks.filter((t) => t.selectedBy?.uid === user?.uid)
 									.length
 						  } görev sizin tarafınızdan seçildi`
 						: 'Görev seçmek için giriş yapın'}
