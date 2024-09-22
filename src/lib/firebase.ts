@@ -2,13 +2,13 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA_lCaDbHndB2i0OyGN4EFhB55E-EqFV9g",
-  authDomain: "okul-yonetim-sistemi-b7e96.firebaseapp.com",
-  projectId: "okul-yonetim-sistemi-b7e96",
-  storageBucket: "okul-yonetim-sistemi-b7e96.appspot.com",
-  messagingSenderId: "53262320445",
-  appId: "1:53262320445:web:9276059873f7acb013fb54",
-  measurementId: "G-7DN4L3T4FC"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);
