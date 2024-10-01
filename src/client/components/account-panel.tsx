@@ -54,8 +54,8 @@ const AccountPanel = React.memo(({ user, onSignOut }: AccountPanelProps) => {
 			].join(' ')}
 		>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="flex items-center justify-between h-16">
-					<div className="flex items-center space-x-4">
+				<div className="flex items-center justify-between h-auto md:h-16 flex-col md:flex-row">
+					<div className="flex items-center space-x-4 my-2">
 						<Avatar
 							className={`h-10 w-10 ${safeUser.photoURL ? '' : avatarColor}`}
 						>
@@ -82,7 +82,7 @@ const AccountPanel = React.memo(({ user, onSignOut }: AccountPanelProps) => {
 						variant="outline"
 						size="sm"
 						onClick={onSignOut}
-						className="text-black border-gray-700"
+						className="text-black border-gray-700 my-2"
 					>
 						<LogOut className="mr-2 h-4 w-4" />
 						Oturumu Kapat
