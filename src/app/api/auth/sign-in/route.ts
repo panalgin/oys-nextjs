@@ -58,7 +58,6 @@ export async function POST(req: Request) {
 		});
 
 		return response;
-
 	} catch (error) {
 		if (error instanceof Error) {
 			return NextResponse.json({ error: 'Database error', details: error.message }, { status: 500 });

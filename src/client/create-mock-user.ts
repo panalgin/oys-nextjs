@@ -6,5 +6,6 @@ export const createMockUser = (email: string, displayName: string, uid: string):
 		displayName,
 		uid,
 		photoURL: '',
+		roles: [],
 	}
 }

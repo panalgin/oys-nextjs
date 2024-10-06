@@ -8,9 +8,15 @@ import { createMockUser } from '@/client/create-mock-user';
 import styles from './account-panel.module.css';
 
 interface AccountPanelProps {
-	user: User;
+	user: User | null;
 	onSignOut: () => void;
 }
+
+const defaultUser: User = createMockUser(
+	'test@test.com',
+	'Test User',
+	'1234567890'
+);
 
 function getInitials(name: string): string {
 	return name
@@ -20,6 +26,7 @@ function getInitials(name: string): string {
 		.toUpperCase()
 		.slice(0, 2);
 }
+
 function getColorFromName(name: string): string {
 	const colors = [
 		'bg-red-400',
@@ -37,11 +44,6 @@ function getColorFromName(name: string): string {
 }
 
 const AccountPanel = React.memo(({ user, onSignOut }: AccountPanelProps) => {
-	const defaultUser: User = createMockUser(
-		'test@test.com',
-		'Test User',
-		'1234567890'
-	);
 	const safeUser = user ?? defaultUser;
 	const initials = getInitials(safeUser.displayName ?? '');
 	const avatarColor = getColorFromName(safeUser.displayName ?? '');

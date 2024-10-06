@@ -9,7 +9,7 @@ import { useToast } from '@/client/components/ui/use-toast';
 import { createMockUser } from '@/client/create-mock-user';
 import Image from 'next/image';
 import { User } from '@/common/user';
-import useUser from '@/client/store/user-store';
+import { useUserStore } from '@/client/store/user-store';
 import { useMemo } from 'react';
 import UserArea from './user-area';
 
@@ -59,7 +59,7 @@ const taskTitles = [
 
 export default function RewardTasks() {
 	const [tasks, setTasks] = React.useState<Task[]>([]);
-	const { user, setUser, isLoading, isFetched } = useUser();
+	const { user } = useUserStore();
 	const { toast } = useToast();
 
 	React.useEffect(() => {
@@ -125,18 +125,7 @@ export default function RewardTasks() {
 			.slice(0, 2);
 	};
 
-	const memoizedUserArea = useMemo(() => {
-		const handleSignOut = () => {
-			setUser(null);
-	
-			toast({
-				title: 'Çıkış yapıldı',
-				description: 'Başarıyla çıkış yaptınız.',
-			});
-		};
-		
-		return <UserArea user={user} isLoading={isLoading} isFetched={isFetched} handleSignOut={handleSignOut} />;
-	}, [user, isLoading, isFetched, setUser, toast]);
+	const memoizedUserArea = useMemo(() => <UserArea />, []);
 
 	return (
 		<div>
