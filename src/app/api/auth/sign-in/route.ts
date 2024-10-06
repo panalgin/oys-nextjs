@@ -31,12 +31,11 @@ export async function POST(req: Request) {
 			displayName: displayName,
 			photoURL: photoURL,
 			iat: Math.floor(Date.now() / 1000),
-			exp: Math.floor(Date.now() / 1000) + 86400, // 1 day in seconds
 			iss: 'okul-app',
 		};
 
 		const jwtSecret = process.env.NEXT_SERVER_JWT_SECRET;
-		
+
 		if (!jwtSecret) {
 			throw new Error('JWT_SECRET is not set');
 		}
@@ -50,7 +49,7 @@ export async function POST(req: Request) {
 		);
 
 		// Set cookie
-		response.cookies.set('_okup_app_jwt', token, {
+		response.cookies.set('_okul_app_jwt', token, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',
 			sameSite: 'strict',

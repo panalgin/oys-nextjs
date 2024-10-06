@@ -16,6 +16,7 @@
     "@radix-ui/react-toast": "^1.2.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.5",
     "firebase": "^10.13.2",
     "firebase-admin": "^12.5.0",
     "lucide-react": "^0.441.0",

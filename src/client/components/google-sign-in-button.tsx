@@ -14,7 +14,13 @@ export function GoogleSignInButton() {
 	const handleSignIn = async () => {
 		try {
 			const result = await signInWithPopup(auth, googleProvider);
-			const user = result.user as User;
+			const user: User =  {
+				uid: result.user.uid,
+				email: result.user.email ?? '',
+				displayName: result.user.displayName ?? '',
+				photoURL: result.user.photoURL ?? '',
+				roles: [], // TODO: Fetch roles from server
+			}
 
 			const userSignInDto: UserSignInDto = {
 				uid: user.uid,
@@ -31,8 +37,6 @@ export function GoogleSignInButton() {
 				},
 				body: JSON.stringify(userSignInDto),
 			});
-      
-			localStorage.setItem('userUid', user.uid);
 
 			setUser(user);
 

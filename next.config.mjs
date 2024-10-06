@@ -1,4 +1,3 @@
-import { loadEnvConfig } from '@next/env';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -14,8 +13,6 @@ if (fs.existsSync(serverEnvPath)) {
 		}
 	});
 }
-
-loadEnvConfig(process.cwd());
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
