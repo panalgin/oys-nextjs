@@ -1,13 +1,16 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import AccountPanel from './account-panel';
 import { GoogleSignInButton } from './google-sign-in-button';
 import { AuthService } from '../auth-service';
 import Skeleton from './ui/skeleton';
-import { useUserStore } from '../store/user-store';
+import { User } from '../../common/user';
 
-const UserAreaContent: React.FC = () => {
-	const { user, isLoading } = useUserStore();
+interface UserAreaProps {
+	user: User | null;
+	isLoading: boolean;
+}
 
+const UserArea = React.memo(({ user, isLoading }: UserAreaProps) => {
 	const handleSignOut = () => {
 		AuthService.logout();
 	};
@@ -25,15 +28,7 @@ const UserAreaContent: React.FC = () => {
 
 	console.log('No user found, rendering GoogleSignInButton');
 	return <GoogleSignInButton />;
-};
-
-const UserArea: React.FC = () => {
-	return (
-		<Suspense fallback={<Skeleton className="h-16 w-full" />}>
-			<UserAreaContent />
-		</Suspense>
-	);
-};
+});
 
 UserArea.displayName = 'UserArea';
 

@@ -6,6 +6,7 @@ import { initialUserState } from "./store/states/initial-user-state";
 import { useUserStore } from "./store/user-store";
 import { UserSignInDto } from "../common/user-sign-in.dto";
 
+// TODO: Move this to a user service, make it DI injectable, not a static class
 export abstract class AuthService {
 	private static async getUser(accessToken: string): Promise<User> {
 		const response = await fetch('/api/users/me', {

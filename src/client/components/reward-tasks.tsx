@@ -11,6 +11,7 @@ import Image from 'next/image';
 import { User } from '@/common/user';
 import { useUserStore } from '@/client/store/user-store';
 import UserArea from './user-area';
+import { useMemo } from 'react';
 
 interface Task {
 	id: string;
@@ -58,7 +59,7 @@ const taskTitles = [
 
 export default function RewardTasks() {
 	const [tasks, setTasks] = React.useState<Task[]>([]);
-	const { user } = useUserStore();
+	const { user, isLoading } = useUserStore();
 	const { toast } = useToast();
 
 	React.useEffect(() => {
@@ -124,14 +125,12 @@ export default function RewardTasks() {
 			.slice(0, 2);
 	};
 
-	const MemoizedUserArea = React.memo(() => <UserArea />);
-	MemoizedUserArea.displayName = 'MemoizedUserArea';
-
+	const memoizedUserArea = useMemo(() => <UserArea user={user} isLoading={isLoading} />, [user, isLoading]);
 
 	return (
 		<div>
 			<div className="my-4">
-				<MemoizedUserArea />
+				{memoizedUserArea}
 			</div>
 			<div className="mb-6">
 				<h2 className="text-2xl font-bold mb-4 text-foreground">
