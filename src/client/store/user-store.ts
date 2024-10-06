@@ -8,14 +8,15 @@ import { auth } from '../firebase';
 
 export const useUserStore = create<UserState>()(
   persist(
-    (set) => ({
+    (set,) => ({
       ...initialUserState,
-      setUser: (user: User | null) => set({ user }),
+      setUser: (user: User | null) => set({ user, isLoading: false }),
       logout: async () => {
         await auth.signOut();
         set({ user: initialUserState.user });
         localStorage.removeItem('user-storage');
       },
+
     }),
     {
       name: 'user-storage',

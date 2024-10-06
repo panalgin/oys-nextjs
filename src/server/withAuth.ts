@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { User } from '@/common/user';
-import { Role } from '../common/roles.enum';
 
 async function authenticateUser(): Promise<User | null> {
 	const cookieStore = cookies();
@@ -27,7 +26,6 @@ async function authenticateUser(): Promise<User | null> {
 			email: decoded.email as string,
 			displayName: decoded.displayName as string,
 			photoURL: decoded.photoURL as string,
-			roles: decoded.roles as Array<Role>,
 		};
 
 		return user;
