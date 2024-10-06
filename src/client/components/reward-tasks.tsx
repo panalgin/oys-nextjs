@@ -10,7 +10,6 @@ import { createMockUser } from '@/client/create-mock-user';
 import Image from 'next/image';
 import { User } from '@/common/user';
 import { useUserStore } from '@/client/store/user-store';
-import { useMemo } from 'react';
 import UserArea from './user-area';
 
 interface Task {
@@ -125,12 +124,14 @@ export default function RewardTasks() {
 			.slice(0, 2);
 	};
 
-	const memoizedUserArea = useMemo(() => <UserArea />, []);
+	const MemoizedUserArea = React.memo(() => <UserArea />);
+	MemoizedUserArea.displayName = 'MemoizedUserArea';
+
 
 	return (
 		<div>
 			<div className="my-4">
-				{memoizedUserArea}
+				<MemoizedUserArea />
 			</div>
 			<div className="mb-6">
 				<h2 className="text-2xl font-bold mb-4 text-foreground">

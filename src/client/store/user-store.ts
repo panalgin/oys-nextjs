@@ -16,7 +16,6 @@ export const useUserStore = create<UserState>()(
         set({ user: initialUserState.user });
         localStorage.removeItem('user-storage');
       },
-
     }),
     {
       name: 'user-storage',

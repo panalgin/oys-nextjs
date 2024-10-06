@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
 		// Create response with cookie
 		const response = NextResponse.json(
-			{ message: 'User upserted', userId: userRef.id },
+			{ access_token: token, refresh_token: token, userId: userRef.id },
 			{ status: 200 }
 		);
 
