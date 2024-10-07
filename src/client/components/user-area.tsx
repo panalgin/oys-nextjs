@@ -1,7 +1,7 @@
 import React from 'react';
 import AccountPanel from './account-panel';
 import { GoogleSignInButton } from './google-sign-in-button';
-import { AuthService } from '../auth-service';
+import { UserService } from '../services/user-service';
 import Skeleton from './ui/skeleton';
 import { User } from '../../common/user';
 
@@ -12,7 +12,7 @@ interface UserAreaProps {
 
 const UserArea = React.memo(({ user, isLoading }: UserAreaProps) => {
 	const handleSignOut = () => {
-		AuthService.logout();
+		UserService.logout();
 	};
 
 	if (isLoading) {

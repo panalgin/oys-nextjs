@@ -1,14 +1,12 @@
-import { User as FirebaseUser } from "firebase/auth";
-import { User } from "../common/user";
+import { User } from "../../common/user";
 
-import { auth } from "./firebase";
-import { initialUserState } from "./store/states/initial-user-state";
-import { useUserStore } from "./store/user-store";
-import { UserSignInDto } from "../common/user-sign-in.dto";
+import { auth } from "../firebase";
+import { initialUserState } from "../store/states/initial-user-state";
+import { useUserStore } from "../store/user-store";
+import { UserSignInDto } from "../../common/user-sign-in.dto";
 
-// TODO: Move this to a user service, make it DI injectable, not a static class
-export abstract class AuthService {
-	private static async getUser(accessToken: string): Promise<User> {
+export class UserService {
+	private async getUser(accessToken: string): Promise<User> {
 		const response = await fetch('/api/users/me', {
 			headers: {
 				'Authorization': `Bearer ${accessToken}`
@@ -25,7 +23,7 @@ export abstract class AuthService {
 		return user;
 	}
 
-	public static async login(firebaseUser: FirebaseUser) {
+	public async login(idToken: string) {
 		const { user: currentUser } = useUserStore.getState();
 
 		if (currentUser !== null) {
@@ -34,10 +32,7 @@ export abstract class AuthService {
 		}
 
 		const signInDto: UserSignInDto = {
-			uid: firebaseUser.uid,
-			email: firebaseUser.email ?? '',
-			displayName: firebaseUser.displayName ?? '',
-			photoURL: firebaseUser.photoURL ?? '',
+			idToken: idToken
 		};
 
 		useUserStore.setState({ isLoading: true });
@@ -49,7 +44,6 @@ export abstract class AuthService {
 
 		if (response.ok) {
 			console.log("User authenticated on our backend");
-			console.log("Firebase user:", firebaseUser);
 			console.log("Existing store user:", currentUser);
 
 			const accessToken = (await response.json()).access_token;
@@ -65,7 +59,7 @@ export abstract class AuthService {
 		useUserStore.setState({ isLoading: false });
 	}
 
-	public static async logout() {
+	public async logout() {
 		await auth.signOut();
 		useUserStore.setState(initialUserState);
 		console.log("User logged out");
